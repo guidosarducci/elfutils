@@ -158,6 +158,43 @@ mips_section_type_name (int type,
   return NULL;
 }
 
+bool
+mips_check_reloc_target_type (Ebl *ebl __attribute__ ((unused)), Elf64_Word sh_type)
+{
+  return (sh_type == SHT_MIPS_DWARF);
+}
+
+/* Check whether given symbol's st_value and st_size are OK despite failing
+   normal checks.  */
+bool
+mips_check_special_symbol (Elf *elf,
+			    const GElf_Sym *sym __attribute__ ((unused)),
+			    const char *name __attribute__ ((unused)),
+			    const GElf_Shdr *destshdr)
+{
+  size_t shstrndx;
+  if (elf_getshdrstrndx (elf, &shstrndx) != 0)
+    return false;
+  const char *sname = elf_strptr (elf, shstrndx, destshdr->sh_name);
+  if (sname == NULL)
+    return false;
+  return (strcmp (sname, ".got") == 0 || strcmp (sname, ".bss") == 0);
+}
+
+/* Check whether SHF_MASKPROC flags are valid.  */
+bool
+mips_machine_section_flag_check (GElf_Xword sh_flags)
+{
+  return ((sh_flags &~ (SHF_MIPS_GPREL |
+			SHF_MIPS_MERGE |
+			SHF_MIPS_ADDR |
+			SHF_MIPS_STRINGS |
+			SHF_MIPS_NOSTRIP |
+			SHF_MIPS_LOCAL |
+			SHF_MIPS_NAMES |
+			SHF_MIPS_NODUPE)) == 0);
+}
+
 /* Check whether machine flags are valid.  */
 bool
 mips_machine_flag_check (GElf_Word flags)
