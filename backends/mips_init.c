@@ -48,6 +48,13 @@ mips_init (Elf *elf __attribute__ ((unused)),
   /* We handle it.  */
   mips_init_reloc (eh);
   HOOK (eh, reloc_simple_type);
+  HOOK (eh, section_type_name);
+  HOOK (eh, machine_flag_check);
+  HOOK (eh, machine_flag_name);
+  HOOK (eh, segment_type_name);
+  HOOK (eh, dynamic_tag_check);
+  HOOK (eh, dynamic_tag_name);
+  HOOK (eh, check_object_attribute);
   HOOK (eh, set_initial_registers_tid);
   HOOK (eh, abi_cfi);
   HOOK (eh, unwind);

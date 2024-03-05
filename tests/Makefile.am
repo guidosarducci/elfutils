@@ -214,7 +214,7 @@ TESTS = run-arextract.sh run-arsymtest.sh run-ar.sh newfile test-nlist \
 	run-nvidia-extended-linemap-libdw.sh run-nvidia-extended-linemap-readelf.sh \
 	run-readelf-dw-form-indirect.sh run-strip-largealign.sh \
 	run-readelf-Dd.sh run-dwfl-core-noncontig.sh run-cu-dwp-section-info.sh \
-	run-declfiles.sh
+	run-declfiles.sh run-readelf-reloc.sh
 
 if !BIARCH
 export ELFUTILS_DISABLE_BIARCH = 1
@@ -646,7 +646,8 @@ EXTRA_DIST = run-arextract.sh run-arsymtest.sh run-ar.sh \
 	     testfile-dwp-5-cu-index-overflow.dwp.bz2 \
 	     testfile-dwp-4-cu-index-overflow.bz2 \
 	     testfile-dwp-4-cu-index-overflow.dwp.bz2 \
-	     testfile-dwp-cu-index-overflow.source
+	     testfile-dwp-cu-index-overflow.source \
+	     run-readelf-reloc.sh
 
 
 if USE_VALGRIND

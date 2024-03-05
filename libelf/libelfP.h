@@ -620,4 +620,5 @@ extern void __libelf_reset_rawdata (Elf_Scn *scn, void *buf, size_t size,
 #define ELF64_MIPS_R_TYPE1(i)          ((i) & 0xff)
 #define ELF64_MIPS_R_TYPE2(i)           (((i) >> 8) & 0xff)
 #define ELF64_MIPS_R_TYPE3(i)           (((i) >> 16) & 0xff)
+#define is_debug_section_type(type) (type == SHT_PROGBITS || type == SHT_MIPS_DWARF)
 #endif  /* libelfP.h */
