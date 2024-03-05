@@ -936,7 +936,9 @@ section [%2d] '%s': symbol %zu (%s): non-local symbol outside range described in
 	}
 
       if (GELF_ST_TYPE (sym->st_info) == STT_SECTION
-	  && GELF_ST_BIND (sym->st_info) != STB_LOCAL)
+	  && GELF_ST_BIND (sym->st_info) != STB_LOCAL
+	  && ehdr->e_machine != EM_MIPS
+	  && strcmp (name, "_DYNAMIC_LINKING") != 0)
 	ERROR (_("\
 section [%2d] '%s': symbol %zu (%s): non-local section symbol\n"),
 	       idx, section_name (ebl, idx), cnt, name);
@@ -3828,6 +3830,10 @@ cannot get section header for section [%2zu] '%s': %s\n"),
 		    && ebl_bss_plt_p (ebl))
 		  good_type = SHT_NOBITS;
 
+		if (ehdr->e_machine == EM_MIPS
+		    && (strstr(special_sections[s].name, ".debug") != NULL))
+		  good_type = SHT_MIPS_DWARF;
+
 		/* In a debuginfo file, any normal section can be SHT_NOBITS.
 		   This is only invalid for DWARF sections and .shstrtab.  */
 		if (shdr->sh_type != good_type
@@ -3988,12 +3994,21 @@ section [%2zu] '%s': size not multiple of entry size\n"),
 		ERROR (_("section [%2zu] '%s'"
 				" contains invalid processor-specific flag(s)"
 				" %#" PRIx64 "\n"),
-		       cnt, section_name (ebl, cnt), sh_flags & SHF_MASKPROC);
+			cnt, section_name (ebl, cnt), sh_flags & SHF_MASKPROC);
 	      sh_flags &= ~(GElf_Xword) SHF_MASKPROC;
 	    }
 	  if (sh_flags & SHF_MASKOS)
-	    if (gnuld)
-	      sh_flags &= ~(GElf_Xword) SHF_GNU_RETAIN;
+	    {
+	      if (gnuld)
+		sh_flags &= ~(GElf_Xword) SHF_GNU_RETAIN;
+	      if (!ebl_machine_section_flag_check (ebl,
+						   sh_flags & SHF_MASKOS))
+		ERROR (_("section [%2zu] '%s'"
+				" contains invalid os-specific flag(s)"
+				" %#" PRIx64 "\n"),
+			cnt, section_name (ebl, cnt), sh_flags & SHF_MASKOS);
+	      sh_flags &= ~(GElf_Xword) SHF_MASKOS;
+	    }
 	  if (sh_flags != 0)
 	    ERROR (_("section [%2zu] '%s' contains unknown flag(s)"
 			    " %#" PRIx64 "\n"),
@@ -4059,6 +4074,7 @@ section [%2zu] '%s': merge flag set but entry size is zero\n"),
 	  switch (shdr->sh_type)
 	    {
 	    case SHT_PROGBITS:
+	    case SHT_MIPS_DWARF:
 	      break;
 
 	    case SHT_NOBITS:
@@ -4716,7 +4732,7 @@ program header offset in ELF header and PHDR entry do not match"));
 	      if (shdr != NULL
 		  && ((is_debuginfo && shdr->sh_type == SHT_NOBITS)
 		      || (! is_debuginfo
-			  && (shdr->sh_type == SHT_PROGBITS
+			  && (is_debug_section_type(shdr->sh_type)
 			      || shdr->sh_type == SHT_X86_64_UNWIND)))
 		  && elf_strptr (ebl->elf, shstrndx, shdr->sh_name) != NULL
 		  && ! strcmp (".eh_frame_hdr",

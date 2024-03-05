@@ -51,10 +51,13 @@ mips_init (Elf *elf __attribute__ ((unused)),
   HOOK (eh, section_type_name);
   HOOK (eh, machine_flag_check);
   HOOK (eh, machine_flag_name);
+  HOOK (eh, machine_section_flag_check);
   HOOK (eh, segment_type_name);
   HOOK (eh, dynamic_tag_check);
   HOOK (eh, dynamic_tag_name);
   HOOK (eh, check_object_attribute);
+  HOOK (eh, check_special_symbol);
+  HOOK (eh, check_reloc_target_type);
   HOOK (eh, set_initial_registers_tid);
   HOOK (eh, abi_cfi);
   HOOK (eh, unwind);
