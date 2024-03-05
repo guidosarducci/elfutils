@@ -228,7 +228,60 @@ elf_update (Elf *elf, Elf_Cmd cmd)
 	  size = -1;
 	}
       else
+	{
+	  /* Because we converted the relocation info in mips order when we call elf_getdata.c,
+	     so we need to convert the modified data in original order bits before writing the
+	     data to the file. */
+	  Elf_Scn *scn = NULL;
+	  while ((scn = elf_nextscn (elf, scn)) != NULL)
+	    {
+	      GElf_Shdr shdr_mem;
+	      GElf_Shdr *shdr = gelf_getshdr (scn, &shdr_mem);
+	      GElf_Ehdr ehdr_mem;
+	      GElf_Ehdr *ehdr = gelf_getehdr (scn->elf, &ehdr_mem);
+	      if (shdr != NULL && (shdr->sh_type == SHT_RELA || shdr->sh_type == SHT_REL) &&
+		scn->elf->class == ELFCLASS64 &&
+		ehdr != NULL && ehdr->e_machine == EM_MIPS && ehdr->e_ident[EI_DATA] == ELFDATA2LSB)
+		{
+		  Elf_Data *d = elf_getdata (scn, NULL);
+		  if (shdr->sh_type == SHT_REL)
+		    {
+		      size_t sh_entsize = gelf_fsize (scn->elf, ELF_T_REL, 1, EV_CURRENT);
+		      int nentries = shdr->sh_size / sh_entsize;
+		      for (int cnt = 0; cnt < nentries; ++cnt)
+			{
+			  Elf_Data_Scn *data_scn = (Elf_Data_Scn *) d;
+			  Elf64_Rel *value = &((Elf64_Rel *) data_scn->d.d_buf)[cnt];
+			  Elf64_Xword info = value->r_info;
+			  value->r_info = (info >> 32
+					| ((info << 56) & 0xff00000000000000)
+					| ((info << 40) & 0xff000000000000)
+					| ((info << 24) & 0xff0000000000)
+					| ((info << 8) & 0xff00000000));
+			  ((Elf64_Rel *) data_scn->d.d_buf)[cnt] = *value;
+			}
+		    }
+		  else if (shdr->sh_type == SHT_RELA)
+		    {
+		      size_t sh_entsize = gelf_fsize (scn->elf, ELF_T_RELA, 1, EV_CURRENT);
+		      int nentries = shdr->sh_size / sh_entsize;
+		      for (int cnt = 0; cnt < nentries; cnt++)
+			{
+			  Elf_Data_Scn *data_scn = (Elf_Data_Scn *) d;
+			  Elf64_Rela *value = &((Elf64_Rela *) data_scn->d.d_buf)[cnt];
+			  Elf64_Xword info = value->r_info;
+			  value->r_info = (info >> 32
+					| ((info << 56) & 0xff00000000000000)
+					| ((info << 40) & 0xff000000000000)
+					| ((info << 24) & 0xff0000000000)
+					| ((info << 8) & 0xff00000000));
+			  ((Elf64_Rela *) data_scn->d.d_buf)[cnt] = *value;
+			}
+		    }
+		}
+	    }
 	size = write_file (elf, size, change_bo, shnum);
+      }
     }
 
  out:
