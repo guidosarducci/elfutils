@@ -2904,4 +2904,83 @@ FPU registers:
 	 62: ft10 (ft10), float 64 bits
 	 63: ft11 (ft11), float 64 bits
 EOF
+
+# See run-readelf-mixed-corenote.sh for instructions to regenerate
+# this core file.
+regs_test testfile-mips64-core <<\EOF
+integer registers:
+	  0: $0 (0), signed 32 bits
+	  1: $1 (1), signed 32 bits
+	  2: $2 (2), signed 32 bits
+	  3: $3 (3), signed 32 bits
+	  4: $4 (4), signed 32 bits
+	  5: $5 (5), signed 32 bits
+	  6: $6 (6), signed 32 bits
+	  7: $7 (7), signed 32 bits
+	  8: $8 (8), signed 32 bits
+	  9: $9 (9), signed 32 bits
+	 10: $10 (10), signed 32 bits
+	 11: $11 (11), signed 32 bits
+	 12: $12 (12), signed 32 bits
+	 13: $13 (13), signed 32 bits
+	 14: $14 (14), signed 32 bits
+	 15: $15 (15), signed 32 bits
+	 16: $16 (16), signed 32 bits
+	 17: $17 (17), signed 32 bits
+	 18: $18 (18), signed 32 bits
+	 19: $19 (19), signed 32 bits
+	 20: $20 (20), signed 32 bits
+	 21: $21 (21), signed 32 bits
+	 22: $22 (22), signed 32 bits
+	 23: $23 (23), signed 32 bits
+	 24: $24 (24), signed 32 bits
+	 25: $25 (25), signed 32 bits
+	 26: $26 (26), signed 32 bits
+	 27: $27 (27), signed 32 bits
+	 28: $28 (28), address 32 bits
+	 29: $29 (29), address 32 bits
+	 30: $30 (30), signed 32 bits
+	 31: $31 (31), address 32 bits
+	 32: $lo (lo), signed 32 bits
+	 33: $hi (hi), signed 32 bits
+	 34: $pc (pc), signed 32 bits
+	 35: $bad (bad), address 32 bits
+	 36: $sr (sr), signed 32 bits
+	 37: $cause (cause), address 32 bits
+FPU registers:
+	 38: $f0 (f0), float 64 bits
+	 39: $f1 (f1), float 64 bits
+	 40: $f2 (f2), float 64 bits
+	 41: $f3 (f3), float 64 bits
+	 42: $f4 (f4), float 64 bits
+	 43: $f5 (f5), float 64 bits
+	 44: $f6 (f6), float 64 bits
+	 45: $f7 (f7), float 64 bits
+	 46: $f8 (f8), float 64 bits
+	 47: $f9 (f9), float 64 bits
+	 48: $f10 (f10), float 64 bits
+	 49: $f11 (f11), float 64 bits
+	 50: $f12 (f12), float 64 bits
+	 51: $f13 (f13), float 64 bits
+	 52: $f14 (f14), float 64 bits
+	 53: $f15 (f15), float 64 bits
+	 54: $f16 (f16), float 64 bits
+	 55: $f17 (f17), float 64 bits
+	 56: $f18 (f18), float 64 bits
+	 57: $f19 (f19), float 64 bits
+	 58: $f20 (f20), float 64 bits
+	 59: $f21 (f21), float 64 bits
+	 60: $f22 (f22), float 64 bits
+	 61: $f23 (f23), float 64 bits
+	 62: $f24 (f24), float 64 bits
+	 63: $f25 (f25), float 64 bits
+	 64: $f26 (f26), float 64 bits
+	 65: $f27 (f27), float 64 bits
+	 66: $f28 (f28), float 64 bits
+	 67: $f29 (f29), float 64 bits
+	 68: $f30 (f30), float 64 bits
+	 69: $f31 (f31), float 64 bits
+	 70: $fsr (fsr), float 64 bits
+	 71: $fir (fir), float 64 bits
+EOF
 exit 0

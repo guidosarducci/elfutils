@@ -716,4 +716,101 @@ Note segment of 1408 bytes at offset 0x388:
       2000155000-2000157000 00122000 8192            /lib64/libc-2.27.so
 EOF
 
+# To reproduce this core dump, do this on a mips machine:
+# $ gcc -x c <(echo 'int main () { return *(int *)0x12345678; }')
+# $ ./a.out
+testfiles testfile-mips64-core
+testrun_compare ${abs_top_builddir}/src/readelf -n testfile-mips64-core <<\EOF
+
+Note segment of 2572 bytes at offset 0x3c0:
+  Owner          Data size  Type
+  CORE                 480  PRSTATUS
+    info.si_signo: 11, info.si_code: 0, info.si_errno: 0, cursig: 11
+    sigpend: <>
+    sighold: <>
+    pid: 1660204, ppid: 1457483, pgrp: 1660204, sid: 1457483
+    utime: 0.000000, stime: 0.012000, cutime: 0.000000, cstime: 0.000000
+    pc: 0x000000aaacce0a64, fpvalid: 1
+    bad:  0x12345678  sr:           0  cause:  0x0400ccf3
+    f0: 0x1000000800000000  f1: 0x0000000000000000  f2: 0x0000000000000000
+    f3: 0x0000000000000000  f4: 0x0000000000000000  f5: 0x0000000000000000
+    f6: 0x0000000000000000
+    0:               0  1:               0  2:               1
+    3:               0  4:       305419896  5:               0
+    6:       -73593800  7:             255  8:               1
+    9:               0  10:      -73593464  11:            255
+    12:      -73593448  13:            255  14:              0
+    15:              0  16:     -244869184  17:            255
+    18:     -244886336  19:            255  20:      -73593472
+    21:            255  22:             -1  23:             -1
+    24:              3  25:              0  26:        3167716
+    27:              0  28:     0x00000024  29:     0x00000000
+    30:          49495  31:     0x00000000  lo:      -73593464
+    hi:            255  bad:    0x12345678  sr:              0
+    cause:  0x0400ccf3  f0:    0x1000000800000000
+    f1:    0x0000000000000000  f2:    0x0000000000000000
+    f3:    0x0000000000000000  f4:    0x0000000000000000
+    f5:    0x0000000000000000  f6:    0x0000000000000000
+  CORE                 136  PRPSINFO
+    state: 0, sname: R, zomb: 0, nice: 0, flag: 0x0000000000402600
+    uid: 1014, gid: 100, pid: 1660204, ppid: 1457483, pgrp: 1660204
+    sid: 1457483
+    fname: a.out, psargs: ./a.out 
+  CORE                 128  SIGINFO
+    si_signo: 11, si_errno: 1, si_code: 0
+    sender PID: 305419896, sender UID: 0
+  CORE                 320  AUXV
+    SYSINFO_EHDR: 0xffff14c000
+    HWCAP: 0x7806
+    PAGESZ: 16384
+    CLKTCK: 100
+    PHDR: 0xaaacce0040
+    PHENT: 56
+    PHNUM: 9
+    BASE: 0xfff1694000
+    FLAGS: 0
+    ENTRY: 0xaaacce08d0
+    UID: 1014
+    EUID: 1014
+    GID: 100
+    EGID: 100
+    SECURE: 0
+    RANDOM: 0xfffb9d0f9c
+    EXECFN: 0xfffb9d3ff0
+    PLATFORM: 0xfffb9d0fb5
+    BASE_PLATFORM: 0xfffb9d0fac
+    NULL
+  CORE                 549  FILE
+    9 files:
+      aaacce0000-aaacce4000 00000000 16384           /tmp/a.out
+      aaaccf0000-aaaccf4000 00000000 16384           /tmp/a.out
+      fff1470000-fff165c000 00000000 2015232         /usr/lib/mips64el-linux-gnuabi64/libc.so.6
+      fff165c000-fff1668000 001ec000 49152           /usr/lib/mips64el-linux-gnuabi64/libc.so.6
+      fff1668000-fff1670000 001e8000 32768           /usr/lib/mips64el-linux-gnuabi64/libc.so.6
+      fff1670000-fff1678000 001f0000 32768           /usr/lib/mips64el-linux-gnuabi64/libc.so.6
+      fff1694000-fff16c4000 00000000 196608          /usr/lib/mips64el-linux-gnuabi64/ld.so.1
+      fff16d0000-fff16d4000 0002c000 16384           /usr/lib/mips64el-linux-gnuabi64/ld.so.1
+      fff16d4000-fff16d8000 00030000 16384           /usr/lib/mips64el-linux-gnuabi64/ld.so.1
+  CORE                 264  FPREGSET
+    fcs: 0x000c0000, fir: 0x00f70501
+    f0:  0xffffffffffffffff  f1:  0xffffffffffffffff
+    f2:  0xffffffffffffffff  f3:  0xffffffffffffffff
+    f4:  0xffffffffffffffff  f5:  0xffffffffffffffff
+    f6:  0xffffffffffffffff  f7:  0xffffffffffffffff
+    f8:  0xffffffffffffffff  f9:  0xffffffffffffffff
+    f10: 0xffffffffffffffff  f11: 0xffffffffffffffff
+    f12: 0xffffffffffffffff  f13: 0xffffffffffffffff
+    f14: 0xffffffffffffffff  f15: 0xffffffffffffffff
+    f16: 0xffffffffffffffff  f17: 0xffffffffffffffff
+    f18: 0xffffffffffffffff  f19: 0xffffffffffffffff
+    f20: 0xffffffffffffffff  f21: 0xffffffffffffffff
+    f22: 0xffffffffffffffff  f23: 0xffffffffffffffff
+    f24: 0xffffffffffffffff  f25: 0xffffffffffffffff
+    f26: 0xffffffffffffffff  f27: 0xffffffffffffffff
+    f28: 0xffffffffffffffff  f29: 0xffffffffffffffff
+    f30: 0xffffffffffffffff  f31: 0xffffffffffffffff
+  LINUX                  4  MIPS_FP_MODE
+  LINUX                528  MIPS_MSA
+EOF
+
 exit 0

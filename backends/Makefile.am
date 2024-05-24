@@ -104,7 +104,7 @@ arc_SRCS = arc_init.c arc_symbol.c
 
 mips_SRCS = mips_init.c mips_symbol.c mips_attrs.c mips_initreg.c \
 	    mips_cfi.c mips_unwind.c mips_regs.c mips_retval.c \
-	    mips_corenote.c
+	    mips_corenote.c mips64_corenote.c
 
 libebl_backends_a_SOURCES = $(i386_SRCS) $(sh_SRCS) $(x86_64_SRCS) \
 			    $(ia64_SRCS) $(alpha_SRCS) $(arm_SRCS) \
