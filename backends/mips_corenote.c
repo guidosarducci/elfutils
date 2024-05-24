@@ -35,15 +35,14 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <sys/time.h>
-
-#define BACKEND	mips_
 #include "libebl_CPU.h"
 
-#define BITS 64
 #ifndef BITS
-# define BITS 		32
+# define BITS 32
+#define BACKEND	mips_
 #else
-# define BITS 		64
+# define BITS 64
+# define BACKEND mips64_
 #endif
 
 #define PRSTATUS_REGS_SIZE	(45 * (BITS / 8))
@@ -60,6 +59,23 @@ static const Ebl_Register_Location prstatus_regs[] =
     .group = "register",						\
     .pc_register = true							\
   }
+
+static const Ebl_Register_Location mips_fpregset_regs[] =
+  {
+    { .offset = 0, .regno = 38, .count = 32, .bits = 64 }, /* fp0-fp31 */
+  };
+
+static const Ebl_Core_Item mips_fpregset_items[] =
+  {
+    {
+      .name = "fcs", .type = ELF_T_WORD, .format = 'x',
+      .offset = 32 * 8, .group = "register"
+    },
+    {
+      .name = "fir", .type = ELF_T_WORD, .format = 'x',
+      .offset = 32 * 8 + 4, .group = "register"
+    }
+  };
 
 #if BITS == 32
 # define ULONG			uint32_t
@@ -81,5 +97,8 @@ static const Ebl_Register_Location prstatus_regs[] =
 #define TYPE_PID_T		ELF_T_SWORD
 #define TYPE_UID_T		ELF_T_WORD
 #define TYPE_GID_T		ELF_T_WORD
+
+#define	EXTRA_NOTES \
+  EXTRA_REGSET_ITEMS (NT_FPREGSET, 32 * 8 + 4 * 2, mips_fpregset_regs, mips_fpregset_items)
 
 #include "linux-core-note.c"

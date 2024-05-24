@@ -40,6 +40,8 @@
 /* This defines the common reloc hooks based on mips_reloc.def.  */
 #include "common-reloc.c"
 
+extern __typeof (EBLHOOK (core_note)) mips64_core_note attribute_hidden;
+
 Ebl *
 mips_init (Elf *elf __attribute__ ((unused)),
 	   GElf_Half machine __attribute__ ((unused)),
@@ -63,7 +65,10 @@ mips_init (Elf *elf __attribute__ ((unused)),
   HOOK (eh, unwind);
   HOOK (eh, register_info);
   HOOK (eh, return_value_location);
-  HOOK (eh, core_note);
+  if (eh->class == ELFCLASS64)
+    eh->core_note = mips64_core_note;
+  else
+    HOOK (eh, core_note);
   eh->frame_nregs = 71;
   return eh;
 }

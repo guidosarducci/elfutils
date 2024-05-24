@@ -94,6 +94,8 @@ ebl_core_note_type_name (Ebl *ebl, uint32_t type, char *buf, size_t len)
 	    KNOWNSTYPE (ARM_SYSTEM_CALL);
 	    KNOWNSTYPE (SIGINFO);
 	    KNOWNSTYPE (FILE);
+	    KNOWNSTYPE (MIPS_FP_MODE);
+	    KNOWNSTYPE (MIPS_MSA);
 #undef KNOWNSTYPE
 
 	  default:
